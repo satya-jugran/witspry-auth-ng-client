@@ -1,0 +1,1 @@
+export * from './oauth2-callback/oauth2-callback.component';
