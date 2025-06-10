@@ -156,6 +156,21 @@ provideOAuth2({
 })
 ```
 
+### Custom Redirect Route
+
+```typescript
+import { OAuth2Config } from 'witspry-auth-ng-client';
+
+const oauth2Config: OAuth2Config = {
+  clientId: 'your-client-id',
+  redirectUri: 'http://localhost:4200/oauth2/callback',
+  authorizationEndpoint: 'https://auth.example.com/oauth2/authorize',
+  tokenEndpoint: 'https://auth.example.com/oauth2/token',
+  scope: 'openid profile email',
+  redirectRoute: '/dashboard' // Custom redirect route
+};
+```
+
 ### Role-based Guards
 
 ```typescript

@@ -2,6 +2,8 @@ import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { OAuth2Service } from '../../services/oauth2.service';
+import { OAuth2Config } from '../../models/oauth2-config.model';
+import { OAUTH2_CONFIG_TOKEN } from '../../tokens/oauth2-config.token';
 
 /**
  * OAuth2 Callback Component
@@ -190,7 +192,8 @@ export class OAuth2CallbackComponent implements OnInit {
   constructor(
     private oauth2Service: OAuth2Service,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    @Inject(OAUTH2_CONFIG_TOKEN) private config: OAuth2Config
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -217,9 +220,9 @@ export class OAuth2CallbackComponent implements OnInit {
         
         // Redirect after a short delay
         setTimeout(() => {
-          // You can customize this redirect logic based on your needs
-          // For example, redirect to a specific route or emit an event
-          this.router.navigate(['/']);
+          // Use configurable redirect route from OAuth2Config, defaulting to '/'
+          const redirectRoute = this.config.redirectRoute || '/';
+          this.router.navigate([redirectRoute]);
         }, 2000);
         
       } catch (error) {
@@ -248,6 +251,8 @@ export class OAuth2CallbackComponent implements OnInit {
   }
 
   goHome(): void {
-    this.router.navigate(['/']);
+    // Use configurable redirect route from OAuth2Config, defaulting to '/'
+    const redirectRoute = this.config.redirectRoute || '/';
+    this.router.navigate([redirectRoute]);
   }
 }

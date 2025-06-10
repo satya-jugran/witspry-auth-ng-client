@@ -49,6 +49,9 @@ export interface OAuth2Config {
   
   /** Custom nonce value (optional, will be generated if not provided) */
   nonce?: string;
+  
+  /** Route to redirect to after successful authentication (default: '/') */
+  redirectRoute?: string;
 }
 
 /**
