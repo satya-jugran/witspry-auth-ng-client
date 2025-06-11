@@ -1,4 +1,4 @@
-# ng-oauth2-pkce
+# witspry-auth-ng-client
 
 A comprehensive Angular library for OAuth2 authentication with PKCE (Proof Key for Code Exchange) support. This library provides secure, configurable, and easy-to-use OAuth2 authentication for Angular applications.
 
@@ -17,7 +17,7 @@ A comprehensive Angular library for OAuth2 authentication with PKCE (Proof Key f
 ## Installation
 
 ```bash
-npm install ng-oauth2-pkce
+npm install witspry-auth-ng-client
 ```
 
 ## Quick Start
@@ -28,7 +28,7 @@ npm install ng-oauth2-pkce
 // app.config.ts
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideOAuth2 } from 'ng-oauth2-pkce';
+import { provideOAuth2 } from 'witspry-auth-ng-client';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -52,7 +52,7 @@ export const appConfig: ApplicationConfig = {
 ```typescript
 // app.routes.ts
 import { Routes } from '@angular/router';
-import { OAuth2CallbackComponent } from 'ng-oauth2-pkce';
+import { OAuth2CallbackComponent } from 'witspry-auth-ng-client';
 
 export const routes: Routes = [
   {
@@ -68,7 +68,7 @@ export const routes: Routes = [
 ```typescript
 // login.component.ts
 import { Component } from '@angular/core';
-import { OAuth2Service } from 'ng-oauth2-pkce';
+import { OAuth2Service } from 'witspry-auth-ng-client';
 
 @Component({
   selector: 'app-login',
@@ -92,7 +92,7 @@ export class LoginComponent {
 ```typescript
 // app.routes.ts
 import { Routes } from '@angular/router';
-import { oauth2AuthGuard } from 'ng-oauth2-pkce';
+import { oauth2AuthGuard } from 'witspry-auth-ng-client';
 
 export const routes: Routes = [
   {
@@ -131,7 +131,7 @@ interface OAuth2Config {
 ### Custom Storage
 
 ```typescript
-import { OAuth2Storage } from 'ng-oauth2-pkce';
+import { OAuth2Storage } from 'witspry-auth-ng-client';
 
 class CustomStorage implements OAuth2Storage {
   getItem(key: string): string | null {
@@ -174,7 +174,7 @@ const oauth2Config: OAuth2Config = {
 ### Role-based Guards
 
 ```typescript
-import { oauth2RoleGuard } from 'ng-oauth2-pkce';
+import { oauth2RoleGuard } from 'witspry-auth-ng-client';
 
 const routes: Routes = [
   {
@@ -192,7 +192,7 @@ const routes: Routes = [
 
 ```typescript
 // If you want to configure the HTTP interceptor manually
-import { provideOAuth2WithoutInterceptor, oauth2InterceptorFn } from 'ng-oauth2-pkce';
+import { provideOAuth2WithoutInterceptor, oauth2InterceptorFn } from 'witspry-auth-ng-client';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
@@ -209,7 +209,7 @@ export const appConfig: ApplicationConfig = {
 
 ```typescript
 // app.module.ts
-import { NgOAuth2PkceModule } from 'ng-oauth2-pkce';
+import { NgOAuth2PkceModule } from 'witspry-auth-ng-client';
 
 @NgModule({
   imports: [
