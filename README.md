@@ -282,3 +282,6 @@ MIT License - see LICENSE file for details.
 
 ### 1.1.0
 - Added config parameter logoutRedirectRoute
+
+### 1.1.1
+- Fix: error section was visible even on successful login.
