@@ -1,5 +1,6 @@
 import { inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 import {
   HttpInterceptorFn,
   HttpRequest,
@@ -32,6 +33,7 @@ export const oauth2InterceptorFn: HttpInterceptorFn = (
   const platformId = inject(PLATFORM_ID);
   const config = inject(OAUTH2_CONFIG_TOKEN);
   const storageService = inject(OAuth2StorageService);
+  const router = inject(Router);
   
   const logLevel = config.logLevel || 'warn';
 
@@ -63,7 +65,7 @@ export const oauth2InterceptorFn: HttpInterceptorFn = (
         if (accessToken || refreshToken) {
           logInfo(logLevel, '401 error detected, attempting token refresh');
           logDebug(logLevel, 'Has access token:', !!accessToken, 'Has refresh token:', !!refreshToken);
-          return handle401Error(request, next, config, storageService, logLevel);
+          return handle401Error(request, next, config, storageService, router, logLevel);
         } else {
           logInfo(logLevel, '401 error but no tokens available for refresh');
         }
@@ -125,6 +127,7 @@ function handle401Error(
   next: HttpHandlerFn,
   config: OAuth2Config,
   storageService: OAuth2StorageService,
+  router: Router,
   logLevel: OAuth2LogLevel
 ): Observable<HttpEvent<any>> {
   if (!isRefreshing) {
@@ -197,8 +200,11 @@ function handle401Error(
           // Clear all OAuth2 tokens from storage
           storageService.clearAll();
           
-          // Optionally redirect to login or emit an event
-          // This depends on your application's requirements
+          // Redirect to logout route if configured
+          if (config.logoutRedirectRoute) {
+            logInfo(logLevel, `Redirecting to logout route: ${config.logoutRedirectRoute}`);
+            router.navigate([config.logoutRedirectRoute]);
+          }
         } else {
           logInfo(logLevel, 'Network/server error, not clearing tokens');
         }

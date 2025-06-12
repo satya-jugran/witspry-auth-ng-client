@@ -156,7 +156,7 @@ provideOAuth2({
 })
 ```
 
-### Custom Redirect Route
+### Custom Redirect Routes For Login And Logout
 
 ```typescript
 import { OAuth2Config } from 'witspry-auth-ng-client';
@@ -167,7 +167,8 @@ const oauth2Config: OAuth2Config = {
   authorizationEndpoint: 'https://auth.example.com/oauth2/authorize',
   tokenEndpoint: 'https://auth.example.com/oauth2/token',
   scope: 'openid profile email',
-  redirectRoute: '/dashboard' // Custom redirect route
+  redirectRoute: '/dashboard'
+  logoutRedirectRoute: '/home'
 };
 ```
 
@@ -278,3 +279,6 @@ MIT License - see LICENSE file for details.
 - HTTP interceptor
 - Route guards
 - TypeScript support
+
+### 1.1.0
+- Added config parameter logoutRedirectRoute

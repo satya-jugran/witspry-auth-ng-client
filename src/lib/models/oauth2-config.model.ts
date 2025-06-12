@@ -52,6 +52,9 @@ export interface OAuth2Config {
   
   /** Route to redirect to after successful authentication (default: '/') */
   redirectRoute?: string;
+  
+  /** Route to redirect to when refresh token fails or is invalid (optional) */
+  logoutRedirectRoute?: string;
 }
 
 /**
