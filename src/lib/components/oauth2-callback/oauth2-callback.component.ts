@@ -28,7 +28,7 @@ import { OAUTH2_CONFIG_TOKEN } from '../../tokens/oauth2-config.token';
           <p>You will be redirected shortly...</p>
         </div>
 
-        <div *ngIf="error && !isLoading && !success" class="error-section">
+        <div *ngIf="!!error && !isLoading && !success" class="error-section">
           <div class="error-icon">✗</div>
           <h2>Authentication Failed</h2>
           <p class="error-message">{{ error }}</p>
@@ -200,7 +200,7 @@ export class OAuth2CallbackComponent implements OnInit {
     // Only handle callback in browser environment
     if (!isPlatformBrowser(this.platformId)) {
       this.isLoading = false;
-      this.error = 'Browser environment required for OAuth2 callback';
+      //this.error = 'Browser environment required for OAuth2 callback';
       return;
     }
 
