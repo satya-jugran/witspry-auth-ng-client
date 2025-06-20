@@ -264,6 +264,15 @@ This library supports all modern browsers that support:
 
 Contributions are welcome! Please read our contributing guidelines and submit pull requests to our repository.
 
+### Npm Publish
+Update the version in package.json. Make sure the test cases are passing. Then run the following commands:
+
+```
+npm run build
+cd .\dist\witspry-auth-ng-client\
+npm publish
+```
+
 ## License
 
 MIT License - see LICENSE file for details.
