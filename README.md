@@ -294,3 +294,6 @@ MIT License - see LICENSE file for details.
 
 ### 1.1.3
 - Fix: error section was visible even on successful login.
+
+### 1.1.4
+- Downgraded to Angular 18 for LLM compatibility
