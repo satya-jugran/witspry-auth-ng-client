@@ -298,3 +298,6 @@ MIT License - see LICENSE file for details.
 ### 1.1.5
 - Downgraded to Angular 18 for LLM compatibility
 - Resolved peer deps from Angular 18 till 20
+
+### 1.1.7
+- Fixed the logoutRedirectRoute issue

@@ -685,6 +685,12 @@ export class OAuth2Service {
       });
       
       this.logInfo('User logged out successfully');
+
+      // Redirect to logout route if configured
+      if (this.config.logoutRedirectRoute) {
+        this.logInfo('Redirecting to logout route: ', this.config.logoutRedirectRoute);
+        this.router.navigate([this.config.logoutRedirectRoute]);
+      }
       
     } catch (error) {
       this.logError('Error during logout:', error);
@@ -695,6 +701,11 @@ export class OAuth2Service {
         isLoading: false,
         tokenInfo: undefined
       });
+      // Redirect to logout route if configured
+      if (this.config.logoutRedirectRoute) {
+        this.logInfo('Redirecting to logout route: ', this.config.logoutRedirectRoute);
+        this.router.navigate([this.config.logoutRedirectRoute]);
+      }
     }
   }
 
