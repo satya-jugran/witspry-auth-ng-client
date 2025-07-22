@@ -3,6 +3,7 @@ import { Router, CanActivateFn, ActivatedRouteSnapshot, RouterStateSnapshot } fr
 import { Observable, of } from 'rxjs';
 import { map, take } from 'rxjs/operators';
 import { OAuth2Service } from '../services/oauth2.service';
+import { OAUTH2_CONFIG_TOKEN } from '../tokens';
 
 /**
  * OAuth2 Authentication Guard Function
@@ -14,6 +15,7 @@ export const oauth2AuthGuard: CanActivateFn = (
 ): Observable<boolean> | Promise<boolean> | boolean => {
   const oauth2Service = inject(OAuth2Service);
   const router = inject(Router);
+  const config = inject(OAUTH2_CONFIG_TOKEN);
 
   // Check if authentication is available in current environment
   if (!oauth2Service.isAuthenticationAvailable()) {
@@ -34,17 +36,24 @@ export const oauth2AuthGuard: CanActivateFn = (
         return true;
       }
 
-      // User is not authenticated, redirect to login or start OAuth flow
-      console.log('[OAuth2AuthGuard] User not authenticated, starting OAuth2 flow');
+      // User is not authenticated, check for refresh token and attempt to refresh
+      if (config.autoRefresh) {
+        oauth2Service.refreshAccessToken().catch(error => {
+          console.error('[OAuth2AuthGuard] Failed to refresh access token:', error);
+          oauth2Service.startAuthorization().catch(error => {
+            console.error('[OAuth2AuthGuard] Failed to start OAuth2 flow:', error);
+          });
+        });
+      } else {
+        // You can customize this behavior:
+        // Option 1: Start OAuth2 flow immediately
+        oauth2Service.startAuthorization().catch(error => {
+          console.error('[OAuth2AuthGuard] Failed to start OAuth2 flow:', error);
+        });
+        // Option 2: Redirect to a login page
+        // router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+      }
       
-      // You can customize this behavior:
-      // Option 1: Start OAuth2 flow immediately
-      oauth2Service.startAuthorization().catch(error => {
-        console.error('[OAuth2AuthGuard] Failed to start OAuth2 flow:', error);
-      });
-      
-      // Option 2: Redirect to a login page
-      // router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
       
       return false;
     })

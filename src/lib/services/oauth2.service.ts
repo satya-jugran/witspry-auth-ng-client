@@ -549,9 +549,15 @@ export class OAuth2Service {
       throw new Error('UserInfo endpoint not configured');
     }
 
-    const accessToken = this.getAccessToken();
+    let accessToken = this.getAccessToken();
     if (!accessToken) {
-      throw new Error('No access token available');
+      this.logInfo('No access token available');
+      if (this.config.autoRefresh) {
+        this.logInfo('autoRefresh is true. Attempting to refresh access token');
+        accessToken = await this.refreshAccessToken();
+      } else {
+        throw new Error('No access token available');
+      }
     }
 
     this.logInfo('Fetching user info from OIDC userinfo endpoint');
