@@ -1,6 +1,6 @@
 {
   "name": "witspry-auth-ng-client",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Witspry auth angular library for secure authentication with configurable providers",
   "keywords": [
     "angular",

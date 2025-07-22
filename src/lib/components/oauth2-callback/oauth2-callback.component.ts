@@ -24,8 +24,18 @@ import { OAUTH2_CONFIG_TOKEN } from '../../tokens/oauth2-config.token';
 
         <div *ngIf="success && !isLoading" class="success-section">
           <div class="success-icon">✓</div>
-          <h2>Authentication Successful!</h2>
-          <p>You will be redirected shortly...</p>
+
+          <div *ngIf="isWitsAuthMessageApplicable" class="witsauth-message">
+            <p style="padding-bottom:10px;"><strong>{{ witsAuthMessage }}</strong></p>
+            <button (click)="goHome()" class="home-button">
+              Go Home
+            </button>
+          </div>
+          <div *ngIf="!isWitsAuthMessageApplicable" class="witsauth-message">
+            <h2>Authentication Successful!</h2>
+            <p>You will be redirected shortly...</p>
+          </div>
+          
         </div>
 
         <div *ngIf="!!error && !isLoading && !success" class="error-section">
@@ -188,6 +198,8 @@ export class OAuth2CallbackComponent implements OnInit {
   isLoading = true;
   error: string | null = null;
   success = false;
+  isWitsAuthMessageApplicable = false;
+  witsAuthMessage: string | null = null;
 
   constructor(
     private oauth2Service: OAuth2Service,
@@ -210,6 +222,22 @@ export class OAuth2CallbackComponent implements OnInit {
         console.log('Starting OAuth2 callback processing...');
         console.log('Current URL:', window.location.href);
         console.log('LocalStorage available:', typeof(Storage) !== "undefined");
+
+        // Handle WithsAuth specific response
+        if (this.config.oAuthProvider === 'witsauth') {
+          const witsAuthResponse = this.oauth2Service.getWitsAuthResponse();
+          if (witsAuthResponse.isApplicable) {
+            this.isLoading = false;
+            this.success = true;
+            this.error = null; // Clear any previous error
+            this.isWitsAuthMessageApplicable = true;
+            this.witsAuthMessage = witsAuthResponse.message;
+            console.log('WitsAuth message:', this.witsAuthMessage);
+            return;
+          } else {
+            console.warn('WitsAuth response not applicable');
+          }
+        }
         
         // Handle the OAuth2 callback
         await this.oauth2Service.handleCallback();
