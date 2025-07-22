@@ -301,3 +301,6 @@ MIT License - see LICENSE file for details.
 
 ### 1.1.7
 - Fixed the logoutRedirectRoute issue
+
+### 1.2.0
+- Automatic token refresh with intervals based on access token expiry
