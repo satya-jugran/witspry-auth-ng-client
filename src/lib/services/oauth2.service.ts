@@ -386,11 +386,11 @@ export class OAuth2Service implements OnDestroy {
     return null;
   }
 
-  private getWitsAuthMessageFromCallback(): {appResponseType: string, code: string; message: string } {
+  private getWitsAuthMessageFromCallback(): {appResponseType: string, code: string, message: string } {
     const urlParams = new URLSearchParams(window.location.search);
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
     const appResponseType = urlParams.get('appResponseType') || hashParams.get('appResponseType');
-    if (appResponseType === '2') {
+    if (appResponseType === AppResponseType.Success.toString()) {
       const message = urlParams.get('appMessage') || hashParams.get('appMessage');
       const code = urlParams.get('appMessageCode') || hashParams.get('appMessageCode');
       return {
