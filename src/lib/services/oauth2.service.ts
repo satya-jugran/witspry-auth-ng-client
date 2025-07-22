@@ -308,6 +308,27 @@ export class OAuth2Service implements OnDestroy {
         await this.handleTokenResponse(tokens);
         return;
       }
+
+      if(this.config.oAuthProvider === 'witsauth') {
+        // Handle WitsAuth specific logic
+        const witsAuthAppResponse = this.getWitsAuthMessageFromCallback();
+        this.logInfo('WitsAuth message from callback:', witsAuthAppResponse);
+        switch (witsAuthAppResponse.appResponseType) {
+          case '2':
+            this.logInfo('WitsAuth app response type 2:', witsAuthAppResponse.message);
+            break;
+          case '3':
+            this.logInfo('WitsAuth app response type 3:', witsAuthAppResponse.message);
+            throw new Error(`Error: ${witsAuthAppResponse.message}`);
+            break;
+          case '4':
+            this.logInfo('WitsAuth app response type 4:', witsAuthAppResponse.message);
+            break;
+          default:
+            this.logWarn('Unknown WitsAuth app response type:', witsAuthAppResponse.appResponseType);
+        }
+        return;
+      }
       
       throw new Error('No authorization code or tokens found in callback');
       
@@ -320,6 +341,28 @@ export class OAuth2Service implements OnDestroy {
       this.storageService.clearAll();
       throw error;
     }
+  }
+
+  getWitsAuthResponse(): {isApplicable: boolean, message: string} {
+    const witsAuthAppResponse = this.getWitsAuthMessageFromCallback();
+    const applicableCodes = [
+      "409778fc-6ced-4de0-935a-fc1afdd20b7b", //RegistrationSuccess
+      "2bbcc634-96f9-4e99-832d-fb84c9139a14", //PasswordResetEmailSent
+      "6ae5ba7f-f6ae-44ec-9130-685b8810fae8" //UnlockEmailSent
+    ];
+    if (witsAuthAppResponse.appResponseType === '2'
+      && witsAuthAppResponse.code
+      && applicableCodes.includes(witsAuthAppResponse.code)
+    ) {
+      return {
+        isApplicable: true,
+        message: witsAuthAppResponse.message
+      };
+    }
+    return {
+      isApplicable: false,
+      message: ''
+    };
   }
 
   /**
@@ -340,6 +383,26 @@ export class OAuth2Service implements OnDestroy {
     }
     
     return null;
+  }
+
+  private getWitsAuthMessageFromCallback(): {appResponseType: string, code: string; message: string } {
+    const urlParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    const appResponseType = urlParams.get('appResponseType') || hashParams.get('appResponseType');
+    if (appResponseType === '2') {
+      const message = urlParams.get('appMessage') || hashParams.get('appMessage');
+      const code = urlParams.get('appMessageCode') || hashParams.get('appMessageCode');
+      return {
+        appResponseType,
+        code: decodeURIComponent(code || ''),
+        message: decodeURIComponent(message || '')
+      };
+    }
+    return {
+      appResponseType: '',
+      code: '',
+      message: ''
+    };
   }
 
   /**

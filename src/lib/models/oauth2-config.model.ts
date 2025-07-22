@@ -55,6 +55,9 @@ export interface OAuth2Config {
   
   /** Route to redirect to when refresh token fails or is invalid (optional) */
   logoutRedirectRoute?: string;
+
+  /** To specify well known OAuth Provider */
+  oAuthProvider?: 'google' | 'witsauth';
 }
 
 /**
