@@ -1,4 +1,4 @@
-import { Injectable, Inject, PLATFORM_ID, signal } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID, signal, OnDestroy } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -28,7 +28,7 @@ import { OAuth2StorageService } from './oauth2-storage.service';
 @Injectable({
   providedIn: 'root'
 })
-export class OAuth2Service {
+export class OAuth2Service implements OnDestroy {
   private _authState = signal<AuthState>({
     isAuthenticated: false,
     isLoading: false
@@ -43,6 +43,7 @@ export class OAuth2Service {
   public readonly authState = this._authState.asReadonly();
 
   private logLevel: OAuth2LogLevel;
+  private autoRefreshTimer?: number;
 
   constructor(
     @Inject(OAUTH2_CONFIG_TOKEN) private config: OAuth2Config,
@@ -474,6 +475,9 @@ export class OAuth2Service {
       // Clean up temporary storage
       this.storageService.clearTemporary();
       
+      // Set up auto-refresh if enabled
+      this.setupAutoRefresh(tokenInfo);
+      
       this.logInfo('Tokens stored successfully, user authenticated');
       
     } catch (error) {
@@ -645,6 +649,9 @@ export class OAuth2Service {
           tokenInfo
         });
         
+        // Set up auto-refresh for the new token
+        this.setupAutoRefresh(tokenInfo);
+        
         this.logInfo('Access token refreshed successfully');
         return tokenResponse.access_token;
       } else {
@@ -653,6 +660,9 @@ export class OAuth2Service {
       
     } catch (error) {
       this.logError('Token refresh failed:', error);
+      
+      // Clear auto-refresh timer on error
+      this.clearAutoRefreshTimer();
       
       // Only logout if it's a 400/401 error indicating invalid refresh token
       if (error instanceof Error && 'status' in error) {
@@ -670,11 +680,55 @@ export class OAuth2Service {
   }
 
   /**
+   * Set up automatic token refresh if enabled
+   */
+  private setupAutoRefresh(tokenInfo: TokenInfo): void {
+    // Clear any existing timer
+    this.clearAutoRefreshTimer();
+    
+    // Check if auto-refresh is enabled
+    if (!this.config.autoRefresh) {
+      return;
+    }
+    
+    // Calculate timeout: time until refresh should happen
+    const refreshThreshold = (this.config.refreshThreshold || 300) * 1000; // Convert to milliseconds
+    const timeout = tokenInfo.expiresAt - Date.now() - refreshThreshold;
+    
+    // Only set timer if there's time left before refresh is needed
+    if (timeout > 0) {
+      this.logDebug(`Setting up auto-refresh timer for ${timeout}ms`);
+      this.autoRefreshTimer = window.setTimeout(() => {
+        this.logInfo('Auto-refreshing access token');
+        this.refreshAccessToken().catch(error => {
+          this.logError('Auto-refresh failed:', error);
+        });
+      }, timeout);
+    } else {
+      this.logDebug('Token expires soon, not setting up auto-refresh timer');
+    }
+  }
+
+  /**
+   * Clear the auto-refresh timer
+   */
+  private clearAutoRefreshTimer(): void {
+    if (this.autoRefreshTimer) {
+      clearTimeout(this.autoRefreshTimer);
+      this.autoRefreshTimer = undefined;
+      this.logDebug('Auto-refresh timer cleared');
+    }
+  }
+
+  /**
    * Logout user and clean up all stored data
    */
   async logout(): Promise<void> {
     try {
       this.updateAuthState({ isLoading: true });
+      
+      // Clear auto-refresh timer
+      this.clearAutoRefreshTimer();
       
       // Revoke tokens if supported
       await this.revokeTokens();
@@ -889,5 +943,12 @@ export class OAuth2Service {
     if (this.logLevel !== 'none') {
       console.error(`[OAuth2Service] ${message}`, error);
     }
+  }
+
+  /**
+   * Angular OnDestroy lifecycle hook
+   */
+  ngOnDestroy(): void {
+    this.clearAutoRefreshTimer();
   }
 }
