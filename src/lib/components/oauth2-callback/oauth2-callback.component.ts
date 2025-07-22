@@ -235,7 +235,7 @@ export class OAuth2CallbackComponent implements OnInit {
             console.log('WitsAuth message:', this.witsAuthMessage);
             return;
           } else {
-            console.warn('WitsAuth response not applicable:', this.witsAuthMessage);
+            console.warn('WitsAuth response not applicable');
           }
         }
         
