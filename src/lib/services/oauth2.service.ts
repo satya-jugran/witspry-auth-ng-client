@@ -20,6 +20,7 @@ import {
 } from '../models/oauth2-types.model';
 import { OAUTH2_CONFIG_TOKEN } from '../tokens/oauth2-config.token';
 import { OAuth2StorageService } from './oauth2-storage.service';
+import { AppResponseType } from '../models';
 
 /**
  * OAuth2 Service with PKCE Support
@@ -350,7 +351,7 @@ export class OAuth2Service implements OnDestroy {
       "2bbcc634-96f9-4e99-832d-fb84c9139a14", //PasswordResetEmailSent
       "6ae5ba7f-f6ae-44ec-9130-685b8810fae8" //UnlockEmailSent
     ];
-    if (witsAuthAppResponse.appResponseType === '2'
+    if (witsAuthAppResponse.appResponseType === AppResponseType.Success.toString()
       && witsAuthAppResponse.code
       && applicableCodes.includes(witsAuthAppResponse.code)
     ) {
