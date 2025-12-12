@@ -309,5 +309,5 @@ MIT License - see LICENSE file for details.
 - Updated Angular dependencies to Angular v21
 
 ### 1.3.3
-- Fixed issue where on exception, the loading screen stucks
+- Fixed issue where on exception, the loading screen stuck
 - Added user friendly error message

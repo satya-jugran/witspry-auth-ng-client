@@ -261,18 +261,7 @@ export class OAuth2CallbackComponent implements OnInit {
         this.isLoading = false;
         this.error = 'Authentication failed. Contact support or try again later.';
         
-        // DIAGNOSTIC: Log property values to confirm they're set correctly
-        console.debug('[DIAGNOSTIC] Error state set:', {
-          success: this.success,
-          isLoading: this.isLoading,
-          error: this.error,
-          shouldShowError: (!!this.error && !this.isLoading && !this.success)
-        });
-        
-        // DIAGNOSTIC: Manually trigger change detection
-        console.debug('[DIAGNOSTIC] Triggering manual change detection...');
         this.cdr.detectChanges();
-        console.debug('[DIAGNOSTIC] Change detection triggered');
       }
     }, 100);
   }
