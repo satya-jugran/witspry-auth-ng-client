@@ -304,3 +304,10 @@ MIT License - see LICENSE file for details.
 
 ### 1.2.0
 - Automatic token refresh with intervals based on access token expiry
+
+### 1.3.0
+- Updated Angular dependencies to Angular v21
+
+### 1.3.3
+- Fixed issue where on exception, the loading screen stuck
+- Added user friendly error message

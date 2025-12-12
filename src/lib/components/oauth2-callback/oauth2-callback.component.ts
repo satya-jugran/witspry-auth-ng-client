@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, ChangeDetectorRef } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { OAuth2Service } from '../../services/oauth2.service';
@@ -205,7 +205,8 @@ export class OAuth2CallbackComponent implements OnInit {
     private oauth2Service: OAuth2Service,
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object,
-    @Inject(OAUTH2_CONFIG_TOKEN) private config: OAuth2Config
+    @Inject(OAUTH2_CONFIG_TOKEN) private config: OAuth2Config,
+    private cdr: ChangeDetectorRef
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -256,8 +257,11 @@ export class OAuth2CallbackComponent implements OnInit {
         
       } catch (error) {
         console.error('OAuth2 callback error:', error);
+        this.success = false;
         this.isLoading = false;
-        this.error = error instanceof Error ? error.message : 'Authentication failed';
+        this.error = 'Authentication failed. Contact support or try again later.';
+        
+        this.cdr.detectChanges();
       }
     }, 100);
   }
