@@ -226,6 +226,12 @@ export class OAuth2Service implements OnDestroy {
       this.storageService.setItem(OAUTH2_STORAGE_KEYS.STATE, state);
       this.storageService.setItem(OAUTH2_STORAGE_KEYS.NONCE, nonce);
       
+      // Evaluate theme if configured
+      let themeVal: string | undefined;
+      if (this.config.theme) {
+        themeVal = typeof this.config.theme === 'function' ? this.config.theme() : this.config.theme;
+      }
+
       // Build authorization request
       const authRequest: AuthorizationRequest = {
         client_id: this.config.clientId,
@@ -236,7 +242,8 @@ export class OAuth2Service implements OnDestroy {
         scope: this.config.scope,
         code_challenge_method: pkceChallenge.codeChallengeMethod,
         code_challenge: pkceChallenge.codeChallenge,
-        state
+        state,
+        theme: themeVal
       };
       
       // Build authorization URL

@@ -58,6 +58,9 @@ export interface OAuth2Config {
 
   /** To specify well known OAuth Provider */
   oAuthProvider?: 'google' | 'witsauth';
+
+  /** UI Theme preference (optional) */
+  theme?: 'light' | 'dark' | 'system' | (() => 'light' | 'dark' | 'system' | string);
 }
 
 /**
