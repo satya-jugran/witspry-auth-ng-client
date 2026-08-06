@@ -108,23 +108,24 @@ export class OAuth2Service implements OnDestroy {
   }
 
   /**
-   * Generate cryptographically secure 6-digit code verifier
+   * Generate cryptographically secure PKCE code verifier (RFC 7636 compliant)
    */
   private generateSecureCodeVerifier(): string {
     if (!isPlatformBrowser(this.platformId)) {
       throw new Error('Code verifier generation requires browser environment');
     }
 
-    // Generate 6 cryptographically secure random digits
-    const array = new Uint8Array(6);
+    // Generate 32 cryptographically secure random bytes
+    const array = new Uint8Array(32);
     crypto.getRandomValues(array);
     
-    // Convert to 6-digit string (000000-999999)
-    const codeVerifier = Array.from(array)
-      .map(byte => (byte % 10).toString())
-      .join('');
+    // Convert to Base64URL string (43 characters long)
+    const codeVerifier = btoa(String.fromCharCode(...array))
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
     
-    this.logDebug('Generated secure 6-digit code verifier');
+    this.logDebug('Generated secure PKCE code verifier');
     return codeVerifier;
   }
 
