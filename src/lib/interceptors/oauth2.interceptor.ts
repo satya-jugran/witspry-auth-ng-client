@@ -201,14 +201,22 @@ function handle401Error(
           storageService.clearAll();
           
           // Redirect to logout route if configured
-          if (config.logoutRedirectRoute) {
+          if (config.logoutEndpoint) {
+            logInfo(logLevel, `Redirecting to external logout endpoint: ${config.logoutEndpoint}`);
+            const url = new URL(config.logoutEndpoint);
+            url.searchParams.set('client_id', config.clientId);
+            
+            // Derive absolute redirect URI for post-logout redirect
+            let postLogoutUri = config.redirectUri;
+            if (config.logoutRedirectRoute) {
+                postLogoutUri = new URL(config.logoutRedirectRoute, window.location.origin).toString();
+            }
+            url.searchParams.set('redirect_uri', postLogoutUri);
+            
+            window.location.href = url.toString();
+          } else if (config.logoutRedirectRoute) {
             logInfo(logLevel, `Redirecting to logout route: ${config.logoutRedirectRoute}`);
-            router.navigate([config.logoutRedirectRoute], {
-              queryParams: {
-                redirect_url: config.redirectUri,
-                client_id: config.clientId
-              }
-            });
+            router.navigate([config.logoutRedirectRoute]);
           }
         } else {
           logInfo(logLevel, 'Network/server error, not clearing tokens');

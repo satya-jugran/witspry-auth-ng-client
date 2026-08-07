@@ -819,14 +819,22 @@ export class OAuth2Service implements OnDestroy {
       this.logInfo('User logged out successfully');
 
       // Redirect to logout route if configured
-      if (this.config.logoutRedirectRoute) {
+      if (this.config.logoutEndpoint) {
+        this.logInfo('Redirecting to external logout endpoint: ', this.config.logoutEndpoint);
+        const url = new URL(this.config.logoutEndpoint);
+        url.searchParams.set('client_id', this.config.clientId);
+        
+        // Derive absolute redirect URI for post-logout redirect
+        let postLogoutUri = this.config.redirectUri;
+        if (this.config.logoutRedirectRoute) {
+            postLogoutUri = new URL(this.config.logoutRedirectRoute, window.location.origin).toString();
+        }
+        url.searchParams.set('redirect_uri', postLogoutUri);
+        
+        window.location.href = url.toString();
+      } else if (this.config.logoutRedirectRoute) {
         this.logInfo('Redirecting to logout route: ', this.config.logoutRedirectRoute);
-        this.router.navigate([this.config.logoutRedirectRoute], {
-          queryParams: {
-            redirect_url: this.config.redirectUri,
-            client_id: this.config.clientId
-          }
-        });
+        this.router.navigate([this.config.logoutRedirectRoute]);
       }
       
     } catch (error) {
@@ -839,14 +847,22 @@ export class OAuth2Service implements OnDestroy {
         tokenInfo: undefined
       });
       // Redirect to logout route if configured
-      if (this.config.logoutRedirectRoute) {
+      if (this.config.logoutEndpoint) {
+        this.logInfo('Redirecting to external logout endpoint: ', this.config.logoutEndpoint);
+        const url = new URL(this.config.logoutEndpoint);
+        url.searchParams.set('client_id', this.config.clientId);
+        
+        // Derive absolute redirect URI for post-logout redirect
+        let postLogoutUri = this.config.redirectUri;
+        if (this.config.logoutRedirectRoute) {
+            postLogoutUri = new URL(this.config.logoutRedirectRoute, window.location.origin).toString();
+        }
+        url.searchParams.set('redirect_uri', postLogoutUri);
+        
+        window.location.href = url.toString();
+      } else if (this.config.logoutRedirectRoute) {
         this.logInfo('Redirecting to logout route: ', this.config.logoutRedirectRoute);
-        this.router.navigate([this.config.logoutRedirectRoute], {
-          queryParams: {
-            redirect_url: this.config.redirectUri,
-            client_id: this.config.clientId
-          }
-        });
+        this.router.navigate([this.config.logoutRedirectRoute]);
       }
     }
   }
