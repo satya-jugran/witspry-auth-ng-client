@@ -821,7 +821,12 @@ export class OAuth2Service implements OnDestroy {
       // Redirect to logout route if configured
       if (this.config.logoutRedirectRoute) {
         this.logInfo('Redirecting to logout route: ', this.config.logoutRedirectRoute);
-        this.router.navigate([this.config.logoutRedirectRoute]);
+        this.router.navigate([this.config.logoutRedirectRoute], {
+          queryParams: {
+            redirect_url: this.config.redirectUri,
+            client_id: this.config.clientId
+          }
+        });
       }
       
     } catch (error) {
@@ -836,7 +841,12 @@ export class OAuth2Service implements OnDestroy {
       // Redirect to logout route if configured
       if (this.config.logoutRedirectRoute) {
         this.logInfo('Redirecting to logout route: ', this.config.logoutRedirectRoute);
-        this.router.navigate([this.config.logoutRedirectRoute]);
+        this.router.navigate([this.config.logoutRedirectRoute], {
+          queryParams: {
+            redirect_url: this.config.redirectUri,
+            client_id: this.config.clientId
+          }
+        });
       }
     }
   }

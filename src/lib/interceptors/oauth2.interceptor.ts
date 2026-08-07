@@ -203,7 +203,12 @@ function handle401Error(
           // Redirect to logout route if configured
           if (config.logoutRedirectRoute) {
             logInfo(logLevel, `Redirecting to logout route: ${config.logoutRedirectRoute}`);
-            router.navigate([config.logoutRedirectRoute]);
+            router.navigate([config.logoutRedirectRoute], {
+              queryParams: {
+                redirect_url: config.redirectUri,
+                client_id: config.clientId
+              }
+            });
           }
         } else {
           logInfo(logLevel, 'Network/server error, not clearing tokens');
