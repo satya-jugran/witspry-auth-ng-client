@@ -234,6 +234,7 @@ export class OAuth2CallbackComponent implements OnInit {
             this.isWitsAuthMessageApplicable = true;
             this.witsAuthMessage = witsAuthResponse.message;
             console.log('WitsAuth message:', this.witsAuthMessage);
+            this.cdr.detectChanges();
             return;
           } else {
             console.warn('WitsAuth response not applicable');
@@ -248,6 +249,8 @@ export class OAuth2CallbackComponent implements OnInit {
         this.success = true;
         this.error = null; // Clear any previous error
         
+        this.cdr.detectChanges();
+
         // Redirect after a short delay
         setTimeout(() => {
           // Use configurable redirect route from OAuth2Config, defaulting to '/'
@@ -280,6 +283,7 @@ export class OAuth2CallbackComponent implements OnInit {
       console.error('Retry login error:', error);
       this.isLoading = false;
       this.error = 'Failed to start authentication';
+      this.cdr.detectChanges();
     });
   }
 
